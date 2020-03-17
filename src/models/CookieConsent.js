@@ -17,7 +17,7 @@ export default class CookieConsent extends Base {
 
     const answers = categories.map( category => {
       const cookieName = this.options.cookie && this.options.cookie.name ? this.options.cookie.name : 'cookieconsent_status_'
-      const answer = getCookie( cookieName + category )
+      const answer = getCookie( cookieName + '_' + category )
       return isValidStatus(answer) ? { [category]: answer } : undefined
     }).filter(obj => obj ? obj[Object.keys(obj)[0]] : false)
 

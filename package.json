@@ -36,6 +36,9 @@
     "webpack-cli": "^3.3.11",
     "webpack-merge": "^4.2.2"
   },
+  "dependencies": {
+    "js-cookie": "^2.2.1"
+  },
   "homepage": "http://cookieconsent.osano.com/",
   "scripts": {
     "clean": "rimraf ./build/**/*",
