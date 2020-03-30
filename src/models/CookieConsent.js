@@ -21,23 +21,25 @@ export default class CookieConsent extends Base {
       return isValidStatus(answer) ? { [category]: answer } : undefined
     }).filter(obj => obj ? obj[Object.keys(obj)[0]] : false)
 
-    // if they have already answered
-    if (answers.length > 0) {
-      setTimeout( () => this.emit( "initialized", answers ) )
-    } else if ( this.options.legal && this.options.legal.countryCode ) {
-      this.initializationComplete( { code: this.options.legal.countryCode } )
+    // if they have already answered we still want it to create the popup anyways to display cookie info
+    if ( this.options.legal && this.options.legal.countryCode ) {
+      this.initializationComplete( { code: this.options.legal.countryCode },answers )
     } else if ( this.options.location ) {
-      new Location( this.options.location ).locate( this.initializationComplete.bind( this ), this.initializationError.bind( this ) )
+      new Location( this.options.location ).locate( this.initializationComplete.bind( this, {},answers ), this.initializationError.bind( this ) )
     } else {
-      this.initializationComplete({})
+      this.initializationComplete({},answers)
     }
   }
-  initializationComplete( result ){
+  initializationComplete( result, answers){
     if (result.code) {
       this.options = new Legal(this.options.legal).applyLaw( this.options, result.code )
     }
     this.popup = new Popup( this.options )
-    setTimeout( () => this.emit("initialized", this.popup ), 0 )
+    if(answers.length == 0)
+      setTimeout( () => this.emit("initialized", this.popup ), 0 )
+    else {
+      setTimeout( () => this.emit( "initialized", answers ) );
+    }
   }
   initializationError( error ) {
     setTimeout( () => this.emit( "error", error, new Popup( this.options ) ), 0 )
